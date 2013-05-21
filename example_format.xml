@@ -10,7 +10,7 @@
             <requiredRoom>bathroom</requiredRoom>
             <requiredRoom>kitchen</requiredRoom>
             <requiredRoom>bedroom</requiredRoom>
-            <optionalRoom>diningRoom</optionalRoom>
+            <requiredRoom>diningRoom</requiredRoom>
             <optionalRoom>laundryRoom</optionalRoom>
         </building>
         <building type="apartment">
@@ -29,10 +29,10 @@
     </buildings>
     <rooms>
         <room type="livingRoom">
-            <minWidth>8</minWidth>
-            <minHeight>8</minHeight>
-            <maxWidth>15</maxWidth>
-            <maxHeight>15</maxHeight>
+            <minWidth>2</minWidth>
+            <minHeight>2</minHeight>
+            <maxWidth>5</maxWidth>
+            <maxHeight>5</maxHeight>
             <minWindows>0</minWindows>
             <maxWindows>5</maxWindows>
             <furniture>TV</furniture>
@@ -44,10 +44,10 @@
             <furniture>electronics</furniture>
         </room>
         <room type="diningRoom">
-            <minWidth>8</minWidth>
-            <minHeight>8</minHeight>
-            <maxWidth>15</maxWidth>
-            <maxHeight>15</maxHeight>
+            <minWidth>2</minWidth>
+            <minHeight>2</minHeight>
+            <maxWidth>5</maxWidth>
+            <maxHeight>5</maxHeight>
             <minWindows>0</minWindows>
             <maxWindows>5</maxWindows>
             <furniture>table</furniture>
@@ -58,10 +58,10 @@
             <furniture>electronics</furniture>
         </room>
         <room type="bathroom">
-            <minWidth>8</minWidth>
-            <minHeight>8</minHeight>
-            <maxWidth>15</maxWidth>
-            <maxHeight>15</maxHeight>
+            <minWidth>2</minWidth>
+            <minHeight>2</minHeight>
+            <maxWidth>5</maxWidth>
+            <maxHeight>5</maxHeight>
             <minWindows>0</minWindows>
             <maxWindows>5</maxWindows>
             <furniture>table</furniture>
@@ -72,10 +72,10 @@
             <furniture>electronics</furniture>
         </room>
         <room type="kitchen">
-            <minWidth>8</minWidth>
-            <minHeight>8</minHeight>
-            <maxWidth>15</maxWidth>
-            <maxHeight>15</maxHeight>
+            <minWidth>2</minWidth>
+            <minHeight>2</minHeight>
+            <maxWidth>5</maxWidth>
+            <maxHeight>5</maxHeight>
             <minWindows>0</minWindows>
             <maxWindows>5</maxWindows>
             <furniture>table</furniture>
@@ -86,10 +86,10 @@
             <furniture>electronics</furniture>
         </room>
         <room type="bedroom">
-            <minWidth>8</minWidth>
-            <minHeight>8</minHeight>
-            <maxWidth>15</maxWidth>
-            <maxHeight>15</maxHeight>
+            <minWidth>2</minWidth>
+            <minHeight>2</minHeight>
+            <maxWidth>5</maxWidth>
+            <maxHeight>5</maxHeight>
             <minWindows>0</minWindows>
             <maxWindows>5</maxWindows>
             <furniture>table</furniture>
@@ -100,10 +100,10 @@
             <furniture>electronics</furniture>
         </room>
         <room type="garage">
-            <minWidth>8</minWidth>
-            <minHeight>8</minHeight>
-            <maxWidth>15</maxWidth>
-            <maxHeight>15</maxHeight>
+            <minWidth>2</minWidth>
+            <minHeight>2</minHeight>
+            <maxWidth>5</maxWidth>
+            <maxHeight>5</maxHeight>
             <minWindows>0</minWindows>
             <maxWindows>5</maxWindows>
             <furniture>table</furniture>
@@ -114,10 +114,10 @@
             <furniture>electronics</furniture>
         </room>
         <room type="laundryRoom">
-            <minWidth>5</minWidth>
-            <minHeight>5</minHeight>
-            <maxWidth>10</maxWidth>
-            <maxHeight>10</maxHeight>
+            <minWidth>2</minWidth>
+            <minHeight>2</minHeight>
+            <maxWidth>5</maxWidth>
+            <maxHeight>5</maxHeight>
             <minWindows>0</minWindows>
             <maxWindows>5</maxWindows>
             <furniture>table</furniture>
