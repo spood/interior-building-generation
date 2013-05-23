@@ -6,7 +6,7 @@ def normalize_sizes(sizes, dx, dy):
     total_size = sum(sizes.values())
     total_area = dx * dy
     for k,v in sizes.iteritems():
-        sizes[k] = float(v)
+        #sizes[k] = float(v)
         sizes[k] = v * total_area / total_size
     #sizes = map(float, sizes)
     #sizes = map(lambda size: size * total_area / total_size, sizes)
