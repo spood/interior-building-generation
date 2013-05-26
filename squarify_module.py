@@ -11,6 +11,14 @@ def normalize_sizes(sizes, dx, dy):
     #sizes = map(float, sizes)
     #sizes = map(lambda size: size * total_area / total_size, sizes)
     return sizes
+    
+def pad_rectangle(rect):
+    if rect['dx'] > 2:
+        rect['x'] += 1
+        rect['dx'] -= 2
+    if rect['dy'] > 2:
+        rect['y'] += 1
+        rect['dy'] -= 2
 
 def layoutrow(sizes, x, y, dx, dy):
     # generate rects for each size in sizes
@@ -116,3 +124,9 @@ def slicedictafter(d, t):
             continue
         newDict[k] = float(v)
     return newDict
+    
+def padded_squarify(sizes, x, y, dx, dy):
+    rects = squarify(sizes, x, y, dx, dy)
+    for rect in rects:
+        pad_rectangle(rect)
+    return rects
