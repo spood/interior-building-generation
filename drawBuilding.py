@@ -5,6 +5,9 @@ import xml.etree.ElementTree as ET
 import numpy
 import itertools
 import math
+import copy
+
+imgVar = 0
 
 class BuildingTemplate:
     
@@ -157,22 +160,27 @@ def export_TMX(floorplan, width, height):
     tmxOutput.close()
     
 def drawBuilding(floor, width, height, rooms):
-    widthtotal = width * tile_size
-    heighttotal = height * tile_size
-    img = Image.new("RGB", (widthtotal + tile_size + 20, heighttotal + tile_size + 20), "white")
+    img = Image.new("RGB", (width * tile_size + tile_size + 20, height * tile_size + tile_size + 20), "white")
     draw = ImageDraw.Draw(img)
     for w in range(width):
         for h in range(height):
             if( floor[w][h] == 1):
                 pointX = (w*tile_size) + (tile_size / 2)
                 pointY = (h*tile_size) + (tile_size / 2)
-                #draw.rectangle( [ (pointX,pointY ), (pointX + tile_size, pointY + tile_size) ], outline="#000000")
+                draw.rectangle( [ (pointX,pointY ), (pointX + tile_size, pointY + tile_size) ], outline="#000000")
+                draw.text( (pointX + tile_size/2, pointY + tile_size/2), str(w) + "," + str(h), fill="#000000")
+            if (floor[w][h] == -1):
+                pointX = (w*tile_size) + (tile_size / 2)
+                pointY = (h*tile_size) + (tile_size / 2)
+                draw.rectangle( [ (pointX,pointY ), (pointX + tile_size, pointY + tile_size) ], outline="#FF0000")
                 draw.text( (pointX + tile_size/2, pointY + tile_size/2), str(w) + "," + str(h), fill="#000000")
     for room in rooms:
-        for w,h in room.tiles:
-            draw.rectangle( [ (w * tile_size,h * tile_size ), (w * tile_size + tile_size, h * tile_size + tile_size) ], outline="#000000")
+        #for w,h in room.tiles:
+        #    draw.rectangle( [ (w * tile_size,h * tile_size ), (w * tile_size + tile_size, h * tile_size + tile_size) ], outline="#000000")
         draw.text( (room.x * tile_size + room.width * tile_size/2, room.y * tile_size + room.height * tile_size/2), room.type, fill="#000000")
-    img.save("img.png", "PNG")
+    global imgVar
+    img.save( str(imgVar) + ".png", "PNG")
+    imgVar += 1
         
 def removeTile(position, rooms):
     for room in rooms:
@@ -271,9 +279,126 @@ def removeDoubleRows(floor, width, height, generatedRooms):
                         #increasedHeight = True
         #if(increasedHeight):
         #    room.height += 1
- 
+
+def pathTouchesRooms(path,rooms):
+    for room in rooms:
+        inRoom = False
+        for pos in path:
+            if pos in room.tiles:
+                inRoom = True
+                continue
+        if inRoom == False:
+            return False
+    return True
+    
+def distance(p1,p2):
+    return math.hypot(p2[0]-p1[0], p2[1]-p1[1])
+    
+def calculateCorridorPath(floor, width, height, rooms, startRoom):
+    roomsNotTouchingStartRoom = []
+    for room in rooms:
+        inRoom = False
+        for pos in room.tiles:
+            if pos in startRoom.tiles:
+                inRoom = True
+                floor[pos[0]][pos[1]] = 0
+        if inRoom == False:
+            roomsNotTouchingStartRoom.append(room)
+    for room in roomsNotTouchingStartRoom:
+        print "not touching",room.type
+            
+    for w in range(0,width+1):
+        print "remove",w,0
+        floor[w][0] = 0
+        removeTile((w,0),rooms)
+        floor[w][height] = 0
+        removeTile((w,height),rooms)
+            
+    for h in range(0,height+1):
+        print "remove",0,h
+        floor[0][h] = 0
+        removeTile((0,h),rooms)
+        floor[width][h] = 0
+        removeTile((width,h),rooms)
         
-#random.seed(4)
+    #floor[13][8] = 1
+    # get start point (the spot closest to the centre of the floor, from the start room)
+    floorMid = (width/2,height/2)
+    closestPos = None
+    closestDist = 999999
+    lastPos = None
+    for pos in startRoom.tiles:
+        dist = distance(pos,floorMid)
+        if(dist < closestDist):
+            lastPos = closestPos
+            closestPos = pos
+            closestDist = dist
+    
+    startPoint = closestPos
+    floor[lastPos[0]][lastPos[1]] = 1
+    availablePaths = []
+    path = [startPoint]
+    stack = [path]
+    firstRun = True
+    # pathfinding
+    while(len(stack) > 0):
+        path = stack.pop()
+        pos = path.pop()
+        # did we find an exit
+        if( floor[pos[0]][pos[1]] == 1 ):
+            if( pos[0] == 1 or pos[0] == width or pos[1] == 1 or pos[1] == height-1):
+                print "found exit at",pos[0],pos[1]
+                foundPath = []
+                foundPath.append( (pos[0],pos[1]) )
+                for w in range(width):
+                    for h in range(height):
+                        if floor[w][h] == -1:
+                            foundPath.append( (w,h) )
+                
+                # if it touches every square
+                if(pathTouchesRooms(foundPath,roomsNotTouchingStartRoom)):
+                    print "this path can work", imgVar
+                    availablePaths.append(foundPath)
+                drawBuilding(floor,width+1,height+1, rooms)
+        # search for available squares around each tile
+        if( ((floor[pos[0]][pos[1]] != 0) and (floor[pos[0]][pos[1]] != -1)) or firstRun):
+            firstRun = False
+            floor[pos[0]][pos[1]] = -1
+            newpath = list(path)
+            newpath.append( (pos[0] + 1, pos[1]) )
+            stack.append(newpath)
+            newpath = list(path)
+            newpath.append( (pos[0] - 1, pos[1]) )
+            stack.append(newpath)
+            newpath = list(path)
+            newpath.append( (pos[0], pos[1] + 1) )
+            stack.append(newpath)
+            newpath = list(path)
+            newpath.append( (pos[0], pos[1] - 1) )
+            stack.append(newpath)
+            
+    # return shortest path
+    availablePaths.sort(key=len)
+    return availablePaths[0]
+    
+def applyCorridorPath(floor, rooms, corridorPath, startRoom):
+    startPos = corridorPath[ len(corridorPath)-1]
+    print startPos
+    for x,y in corridorPath:
+        # TODO update the tiles for each room affected...
+        floor[x][y] = 0
+        if( (x,y) not in startRoom.tiles):
+            if (x-1,y) not in corridorPath:
+                floor[x-1][y] = 1
+            if (x+1,y) not in corridorPath:
+                floor[x+1][y] = 1
+            if (x,y-1) not in corridorPath:
+                floor[x][y-1] = 1
+            if (x,y+1) not in corridorPath:
+                floor[x][y+1] = 1
+        
+    
+#random.seed(6)
 XMLreader = XMLBuildingTemplateReader("example_format.xml")
 buildings = XMLreader.loadBuildings()
 rooms = XMLreader.loadRooms()
@@ -304,9 +429,11 @@ rects = squarify_module.padded_squarify(values, x, y,widthtotal, heighttotal)
 img = Image.new("RGB", (widthtotal + tile_size + 20, heighttotal + tile_size + 20), "white")
 draw = ImageDraw.Draw(img)
 
+startRoom = None
 generatedRooms = []
 # place rooms
 for rect in rects:
+    drawBuilding(floor, width, height, generatedRooms)
     rectX = int( round(rect['x'] / tile_size))
     rectY = int( round(rect['y'] / tile_size))
     rectWidth = int( round(rect['dx'] / tile_size))
@@ -348,6 +475,7 @@ for rect in rects:
     removeDoubleRows(floor, width, height, generatedRooms)
     # draw front door
     if(rect['name'] == "livingRoom"):
+        startRoom = newRoom
         if(rectX < 3):
             draw.rectangle( [ (rectX*tile_size, rectCentreY*tile_size), (tile_size, rectCentreY*tile_size+tile_size) ], outline="#000000")
         if(rectX >= width-3):
@@ -367,6 +495,8 @@ export_TMX(floor, width, height)
 
 drawBuilding(floor, width, height, generatedRooms)
 
+corridorPath = calculateCorridorPath(copy.deepcopy(floor), width-1, height-1, generatedRooms, startRoom)
 
+applyCorridorPath(floor,rooms,corridorPath, startRoom)
 
-
+drawBuilding(floor, width, height, generatedRooms)
