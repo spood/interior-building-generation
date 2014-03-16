@@ -168,12 +168,12 @@ def drawBuilding(floor, width, height, rooms):
                 pointX = (w*tile_size) + (tile_size / 2)
                 pointY = (h*tile_size) + (tile_size / 2)
                 draw.rectangle( [ (pointX,pointY ), (pointX + tile_size, pointY + tile_size) ], outline="#000000")
-                draw.text( (pointX + tile_size/2, pointY + tile_size/2), str(w) + "," + str(h), fill="#000000")
+                #draw.text( (pointX + tile_size/2, pointY + tile_size/2), str(w) + "," + str(h), fill="#000000")
             if (floor[w][h] == -1):
                 pointX = (w*tile_size) + (tile_size / 2)
                 pointY = (h*tile_size) + (tile_size / 2)
                 draw.rectangle( [ (pointX,pointY ), (pointX + tile_size, pointY + tile_size) ], outline="#FF0000")
-                draw.text( (pointX + tile_size/2, pointY + tile_size/2), str(w) + "," + str(h), fill="#000000")
+                #draw.text( (pointX + tile_size/2, pointY + tile_size/2), str(w) + "," + str(h), fill="#000000")
     for room in rooms:
         #for w,h in room.tiles:
         #    draw.rectangle( [ (w * tile_size,h * tile_size ), (w * tile_size + tile_size, h * tile_size + tile_size) ], outline="#000000")
